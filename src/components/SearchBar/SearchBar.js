@@ -1,11 +1,11 @@
-import SearchButton from "../SearchButton/SearchButton";
+
 
 function SearchBar(){
 return(
     <>
     <form>
-        <input type="text" name="searchField"></input>
-        <SearchButton />
+        <input type="text" placeholder="Enter A Song, Album, or Artist"></input>
+        <button name="search"></button>
     </form>
     </>
 )
