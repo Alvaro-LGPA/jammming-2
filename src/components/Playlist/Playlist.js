@@ -5,6 +5,7 @@ function Playlist(){
         <>
             <input type="text" placeholder="Playlist name"></input>
             <Track />
+            <button name="save"></button>
         </>
     )
 }
