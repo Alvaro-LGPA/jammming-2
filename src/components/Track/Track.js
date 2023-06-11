@@ -1,11 +1,15 @@
-function Track(){
-    return(
-        <>
-        <h2>Name</h2>
-        <h3>Artist | Album</h3>
-        <h2>+</h2>
-        </>
-        )
+import "./Track.css"
+
+function Track() {
+    return (
+        <div className="Track">
+            <div className="Track-information">
+                <h3>Name</h3>
+                <p>Artist | Album</p>
+            </div>
+            <button className="Track-action">+</button>
+        </div>
+    )
 }
 
 export default Track;
