@@ -1,12 +1,18 @@
 import "./TrackList.css"
 import Track from "../Track/Track"
 
-function TrackList({searchResults}) {
-    
+function TrackList({ searchResults, handleAddTrack }) {
+
     return (
         <div className="TrackList">
-            {searchResults?.map((track, i) => <Track name={track.name} artist={track.artist} album={track.album} id={track.id} />)}
-            {/* {searchResults} */}
+            {searchResults?.map((track, i) =>
+                <Track
+                    name={track.name}
+                    artist={track.artist}
+                    album={track.album}
+                    id={track.id}
+                    handleAddTrack={handleAddTrack} />)}
+
         </div>
     )
 }
