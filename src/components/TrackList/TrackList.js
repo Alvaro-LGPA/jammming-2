@@ -1,13 +1,14 @@
 import "./TrackList.css"
-
 import Track from "../Track/Track"
 
-function Tracklist() {
+function TrackList({searchResults}) {
+    
     return (
         <div className="TrackList">
-            <Track />
+            {searchResults?.map((track, i) => <Track name={track.name} artist={track.artist} album={track.album} id={track.id} />)}
+            {/* {searchResults} */}
         </div>
     )
 }
 
-export default Tracklist;
+export default TrackList;

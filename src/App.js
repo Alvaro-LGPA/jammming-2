@@ -1,5 +1,7 @@
 
 import './App.css';
+import React from 'react';
+import { useState } from 'react';
 import Playlist from './components/Playlist/Playlist';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';

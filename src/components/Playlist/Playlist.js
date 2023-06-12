@@ -1,6 +1,5 @@
 import "./Playlist.css";
-import Tracklist from "../TrackList/TrackList.js";
-
+import Tracklist from "../TrackList/TrackList";
 function Playlist(){
     return(
         <div className="Playlist">

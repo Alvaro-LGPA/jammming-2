@@ -1,11 +1,11 @@
 import "./SearchResults.css";
-import Tracklist from "../TrackList/TrackList";
+import TrackList from "../TrackList/TrackList";
 
-function SearchResults(){
+function SearchResults({searchResults}){
     return(
         <div className="SearchResults">
             <h1>Search Results</h1>
-            <Tracklist />
+            <TrackList searchResults={searchResults} />
         </div>
     )
 }

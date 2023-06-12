@@ -1,11 +1,11 @@
 import "./Track.css"
 
-function Track() {
+function Track({name, artist, album, id}) {
     return (
-        <div className="Track">
+        <div className="Track" key={id}>
             <div className="Track-information">
-                <h3>Name</h3>
-                <p>Artist | Album</p>
+                <h3>{name}</h3>
+                <p>{artist} | {album}</p>
             </div>
             <button className="Track-action">+</button>
         </div>
