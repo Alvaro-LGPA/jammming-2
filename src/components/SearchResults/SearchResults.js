@@ -7,7 +7,8 @@ function SearchResults({searchResults, handleAddTrack}){
             <h1>Search Results</h1>
             <TrackList 
                 searchResults={searchResults} 
-                handleAddTrack={handleAddTrack}/>
+                handleAddTrack={handleAddTrack}
+                isRemovable={false}/>
         </div>
     )
 }

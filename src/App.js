@@ -29,7 +29,7 @@ function App() {
     }
   ]
 
-  const playListTracks = [
+ /*  const playListTracks = [
     {
       name: "Track 4 Name",
       artist: "Track 4 Artist",
@@ -48,13 +48,13 @@ function App() {
       album: "Track 6 Album",
       id: "Track 6-id"
     }
-  ]
+  ] */
 
   // Display search results
   const [searchResults, setSearchResults] = useState(tracksInfo);
 
   // Manage playlist
-  const [playList, setPlaylist] = useState(playListTracks)
+  const [playListTracks, setPlaylist] = useState([])
 
   // Handle playlist name change
   const [playlistName, setPlaylistName] = useState("");
@@ -67,13 +67,25 @@ function App() {
   // Add track from searchResults to Playlist
   function handleAddTrack(trackId) {
     const trackToAdd = searchResults.find(track => track.id === trackId);
+    console.log(`TrackId:${trackId}`)
+    console.log(`TrackToAdd: ${trackToAdd}`)
     
-    const canAdd = !playList.some(track => track.id === trackId);
+    const canAdd = !playListTracks.some(track => track.id === trackId);
     if (canAdd) {
-      setPlaylist([...playList, trackToAdd])
+      setPlaylist([...playListTracks, trackToAdd])
     }
   }
 
+  // Remove track from playlist
+  function handleRemoveTrack(trackId) {
+    const trackToRemove = playListTracks.find(track => track.id === trackId);
+
+    const canRemove = playListTracks.some(track => track.id === trackId);
+
+    if(canRemove) {
+      setPlaylist(playListTracks.filter(track => track.id !== trackId));
+    }
+  }
 
   return (
     <div className="App">
@@ -85,7 +97,8 @@ function App() {
         <Playlist
           playlistName={playlistName}
           handleNameChange={handleNameChange}
-          playListTracks={playList} />
+          playListTracks={playListTracks}
+          handleRemoveTrack={handleRemoveTrack} />
       </div>
     </div>
   );
