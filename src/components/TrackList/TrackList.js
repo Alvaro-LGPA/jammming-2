@@ -1,7 +1,7 @@
 import "./TrackList.css"
 import Track from "../Track/Track"
 
-function TrackList({ searchResults, handleAddTrack, playListTracks, isRemovable }) {
+function TrackList({ searchResults, handleAddTrack, handleRemoveTrack, playListTracks, isRemovable }) {
 
     return (
         <>
@@ -17,7 +17,7 @@ function TrackList({ searchResults, handleAddTrack, playListTracks, isRemovable 
                             album={track.album}
                             key={track.id}
                             id={track.id}
-                            handleAddTrack={handleAddTrack}
+                            handleRemoveTrack={handleRemoveTrack}
                             isRemovable={true} />)}
                 </div>
                 :
