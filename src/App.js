@@ -13,42 +13,29 @@ function App() {
       name: "Track 1 Name",
       artist: "Track 1 Artist",
       album: "Track 1 Album",
-      id: "Track 1-id"
+      id: "Track 1-id",
+      uri: 12
     },
     {
       name: "Track 2 Name",
       artist: "Track 2 Artist",
       album: "Track 2 Album",
-      id: "Track 2-id"
+      id: "Track 2-id",
+      uri: 123
     },
     {
       name: "Track 3 Name",
       artist: "Track 3 Artist",
       album: "Track 3 Album",
-      id: "Track 3-id"
+      id: "Track 3-id",
+      uri: 1234
     }
   ]
 
- /*  const playListTracks = [
-    {
-      name: "Track 4 Name",
-      artist: "Track 4 Artist",
-      album: "Track 4 Album",
-      id: "Track 4-id"
-    },
-    {
-      name: "Track 5 Name",
-      artist: "Track 5 Artist",
-      album: "Track 5 Album",
-      id: "Track 5-id"
-    },
-    {
-      name: "Track 6 Name",
-      artist: "Track 6 Artist",
-      album: "Track 6 Album",
-      id: "Track 6-id"
-    }
-  ] */
+
+
+  // Create an array or uri in the playlist
+    const [uris, setUris] = useState([])
 
   // Display search results
   const [searchResults, setSearchResults] = useState(tracksInfo);
@@ -73,6 +60,7 @@ function App() {
     const canAdd = !playListTracks.some(track => track.id === trackId);
     if (canAdd) {
       setPlaylist([...playListTracks, trackToAdd])
+      setUris([...uris, trackToAdd.uri])
     }
   }
 
@@ -84,6 +72,7 @@ function App() {
 
     if(canRemove) {
       setPlaylist(playListTracks.filter(track => track.id !== trackId));
+      setUris(uris.filter(uri => uri !== trackToRemove.uri))
     }
   }
 
