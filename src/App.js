@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Playlist from './components/Playlist/Playlist';
 import SearchBar from './components/SearchBar/SearchBar';
 import SearchResults from './components/SearchResults/SearchResults';
+import getData from './util/spotify';
 
 function App() {
 
@@ -34,15 +35,23 @@ function App() {
 
 
   // handle search term
-  const[searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState("");
 
-  function handleSearchTerm(value){
+  function handleSearchTerm(value) {
     setSearchTerm(value)
   }
 
+function sendSearchQuery(){
+
+  const encodedQuery = encodeURIComponent(searchTerm)
+  console.log(getData(encodedQuery))
+
+}
+  
+
 
   // Create an array or uri in the playlist
-    const [uris, setUris] = useState([])
+  const [uris, setUris] = useState([])
 
   // Display search results
   const [searchResults, setSearchResults] = useState(tracksInfo);
@@ -63,7 +72,7 @@ function App() {
     const trackToAdd = searchResults.find(track => track.id === trackId);
     console.log(`TrackId:${trackId}`)
     console.log(`TrackToAdd: ${trackToAdd}`)
-    
+
     const canAdd = !playListTracks.some(track => track.id === trackId);
     if (canAdd) {
       setPlaylist([...playListTracks, trackToAdd])
@@ -77,7 +86,7 @@ function App() {
 
     const canRemove = playListTracks.some(track => track.id === trackId);
 
-    if(canRemove) {
+    if (canRemove) {
       setPlaylist(playListTracks.filter(track => track.id !== trackId));
       setUris(uris.filter(uri => uri !== trackToRemove.uri))
     }
@@ -85,7 +94,7 @@ function App() {
 
   return (
     <div className="App">
-      <SearchBar handleSearchTerm= {handleSearchTerm} />
+      <SearchBar handleSearchTerm={handleSearchTerm} sendSearchQuery={sendSearchQuery}/>
       <div className='App-playlist'>
         <SearchResults
           searchResults={searchResults}

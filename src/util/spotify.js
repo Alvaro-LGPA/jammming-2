@@ -40,6 +40,13 @@ console.log(params)
 function authenticate() {
   if (access_token) {
     console.log(access_token)
+    // This clears the parameters, allowing us to grab a new access token when it expires 
+    setTimeout(() => {
+      access_token = '';
+      alert("Token expired");
+    }, params.expires_in * 1000)
+    //window.alert(`PushState para eliminar el token de la direccion del navegador: ${accessToken}`)
+    window.history.pushState('Access Token', null, '/');
     return access_token
   } else {
     let client_id = 'b4ddea724f004dd9803b28998ac8738c'; // Your client id
@@ -102,7 +109,16 @@ const getData = async (searchQuery) => {
       const jsonResponse = await response.json();
       // Code to execute with jsonResponse
       console.log(jsonResponse)
-      console.log(access_token)
+      return ([
+        {
+          name: "tricky",
+          artist: "tracka",
+          album: "Tadfadslbum",
+          id: "Trafsdfadsd",
+          uri: 1234
+
+        }]
+      )
     } else {
       throw new Error('Request failed!');
     }
@@ -111,12 +127,13 @@ const getData = async (searchQuery) => {
   }
 }
 
-function testButton() {
+/* 
+function searchTerm() {
 
   // authenticate();
   const searchQuery = document.getElementById("search-query").value;
   getData(encodeURIComponent(searchQuery));
 
-}
+} */
 
-export default testButton;
+export default getData;
