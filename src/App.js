@@ -33,6 +33,13 @@ function App() {
   ]
 
 
+  // handle search term
+  const[searchTerm, setSearchTerm] = useState("")
+
+  function handleSearchTerm(value){
+    setSearchTerm(value)
+  }
+
 
   // Create an array or uri in the playlist
     const [uris, setUris] = useState([])
@@ -78,7 +85,7 @@ function App() {
 
   return (
     <div className="App">
-      <SearchBar />
+      <SearchBar handleSearchTerm= {handleSearchTerm} />
       <div className='App-playlist'>
         <SearchResults
           searchResults={searchResults}

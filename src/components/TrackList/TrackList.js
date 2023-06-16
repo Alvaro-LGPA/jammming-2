@@ -8,7 +8,6 @@ function TrackList({ searchResults, handleAddTrack, handleRemoveTrack, playListT
             {isRemovable ?
 
                 <div className="TrackList">
-                    {console.log(playListTracks)}
                     {playListTracks.map(track =>
                     
                         <Track
