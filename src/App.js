@@ -43,8 +43,8 @@ function App() {
 
 function sendSearchQuery(){
 
-  const encodedQuery = encodeURIComponent(searchTerm)
-  console.log(getData(encodedQuery))
+  const encodedQuery = encodeURIComponent(searchTerm);
+  getData(encodedQuery).then(setSearchResults)
 
 }
   

@@ -36,7 +36,7 @@ let access_token = params.access_token,
   storedState = localStorage.getItem(stateKey);
 
 
-console.log(params)
+
 function authenticate() {
   if (access_token) {
     console.log(access_token)
@@ -73,9 +73,8 @@ function authenticate() {
 };
 
 // This commented code uses synchronous call.
-/* const getData = (searchQuery) => {
-  window.alert(searchQuery)
-
+const getData = (searchQuery) => {
+authenticate()
   return fetch('https://api.spotify.com/v1/search?q=' + searchQuery + '&type=track',
     {
       headers: { 'Authorization': 'Bearer ' + access_token }
@@ -91,14 +90,23 @@ function authenticate() {
     jsonResponse => {
 
       //code to execute with jsonResponse
-      console.log(jsonResponse)
+      //console.log(jsonResponse)
+      return (jsonResponse.tracks.items.map((track) =>
+      ({
+        name: track.name,
+        artist: track.artists[0].name,
+        album: track.album.name,
+        id: track.id,
+        uri: track.uri
+
+      })))
     }
   )
 
-}   */
+}
 
 // This is an asyncrhonous call.
-const getData = async (searchQuery) => {
+/* const getData = async (searchQuery) => {
   authenticate();
   try {
     const response = await fetch('https://api.spotify.com/v1/search?q=' + searchQuery + '&type=track',
@@ -109,23 +117,14 @@ const getData = async (searchQuery) => {
       const jsonResponse = await response.json();
       // Code to execute with jsonResponse
       console.log(jsonResponse)
-      return ([
-        {
-          name: "tricky",
-          artist: "tracka",
-          album: "Tadfadslbum",
-          id: "Trafsdfadsd",
-          uri: 1234
-
-        }]
-      )
+      console.log (jsonResponse.tracks.items[0].name)
     } else {
       throw new Error('Request failed!');
     }
   } catch (error) {
     console.log(error.message);
   }
-}
+} */
 
 /* 
 function searchTerm() {

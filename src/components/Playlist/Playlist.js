@@ -12,9 +12,8 @@ function Playlist({playlistName, handleNameChange, playListTracks, handleRemoveT
                 handleRemoveTrack={handleRemoveTrack}
                 isRemovable={true}
                 />
-
-            {/* {playListTracks?.map((track, i) => <Track key={track.id} name={track.name} artist={track.artist} album={track.album} id={track.id} isRemovable={true} handleRemoveTrack={handleRemoveTrack}/>)}
-            <button className="Playlist-save">Save Playlist</button> */}
+            
+            <button className="Playlist-save">Save Playlist to Spotify</button> 
         </div>
     )
 }
