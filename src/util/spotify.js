@@ -48,7 +48,7 @@ const Spotify = {
     access_token = params.access_token;
     state = params.state;
     expires_in = Number(params.expires_in);
-  
+
     if (access_token && expires_in) {
 
       // This clears the parameters, allowing us to grab a new access token when it expires 
@@ -68,14 +68,14 @@ const Spotify = {
       localStorage.setItem(stateKey, state);
       let scope = 'playlist-modify-public';
 
-    let url = 'https://accounts.spotify.com/authorize';
+      let url = 'https://accounts.spotify.com/authorize';
       url += '?response_type=token';
       url += '&client_id=' + encodeURIComponent(client_id);
       url += '&scope=' + encodeURIComponent(scope);
       url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
       url += '&state=' + encodeURIComponent(state);
-      url += '&show_dialog=' + false; 
-    
+      url += '&show_dialog=' + false;
+
 
       window.location = url;
     }
@@ -83,45 +83,73 @@ const Spotify = {
 
   },
 
-
-  search(searchQuery) {
-    if(!searchQuery){
-      return;
-    }
-
-    if (!access_token) {
-      this.getAccessToken();
-    }
-
-    return fetch('https://api.spotify.com/v1/search?q=' + searchQuery + '&type=track',
-      {
-        headers: { 'Authorization': 'Bearer ' + access_token }
+  // async syntax
+  async search(searchQuery) {
+    try {
+      if (!searchQuery) {
+        return;
       }
-    ).then(
-      response => {
 
-        if (response.ok) {
-          return response.json();
+      if (!access_token) {
+        this.getAccessToken();
+      }
+
+      const getRequest = await fetch('https://api.spotify.com/v1/search?q=' + searchQuery + '&type=track',
+        {
+          headers: { 'Authorization': 'Bearer ' + access_token }
         }
-        throw new Error('Request failed!');
-      }, networkError => console.log(networkError.message)
-    ).then(
-      jsonResponse => {
-        return (jsonResponse.tracks.items.map((track) =>
-        ({
-          name: track.name,
-          artist: track.artists[0].name,
-          album: track.album.name,
-          id: track.id,
-          uri: track.uri
+      );
 
-        })))
-      }
-    )
-
+      const getRequestJson = await getRequest.json();
+      return (getRequestJson.tracks.items.map(track => ({
+        name: track.name,
+        artist: track.artists[0].name,
+        album: track.album.name,
+        id: track.id,
+        uri: track.uri
+      })))
+    } catch (error) {
+      console.log(error);
+    }
   },
+  async savePlaylist(playlistName, trackUris) {
 
-  savePlaylist(playlistName, trackUris) {
+    try {
+
+      if (!playlistName || !trackUris) {
+        return;
+      }
+
+      this.getAccessToken();
+
+      const headers = { Authorization: `Bearer ${access_token}` };
+
+      const getUserId = await fetch('https://api.spotify.com/v1/me', { headers: headers });
+      const getUserIdJSON = await getUserId.json();
+      const user_Id = getUserIdJSON.id;
+      const createPlaylist = await fetch(`https://api.spotify.com/v1/users/${user_Id}/playlists`,
+        {
+          headers: headers,
+          method: 'POST',
+          body: JSON.stringify({
+            name: playlistName
+          })
+        })
+      const createPlaylistJSON = await createPlaylist.json();
+      const playlist_Id = createPlaylistJSON.id;
+
+      await fetch(`https://api.spotify.com/v1/users/${user_Id}/playlists/${playlist_Id}/tracks`, {
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify({ uris: trackUris })
+      })
+
+    } catch (err) {
+      console.log(err);
+    }
+  }
+  //Native promises syntax
+  /* savePlaylist(playlistName, trackUris) {
     if(!playlistName || !trackUris){
       return;
     }
@@ -172,7 +200,7 @@ const Spotify = {
           body: JSON.stringify({ uris: trackUris })
         })
       });
-  }
+  } */
 
 }
 
