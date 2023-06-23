@@ -72,7 +72,8 @@ function sendSearchQuery(e){
 
   // Create Spotify user playlist
 
-  function saveSpotifyPlaylist(){
+  function saveSpotifyPlaylist(e){
+    e.preventDefault();
     Spotify.savePlaylist(playlistName, uris);
   }
 
