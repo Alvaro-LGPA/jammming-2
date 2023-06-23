@@ -2,7 +2,8 @@ import "./Playlist.css";
 import TrackList from "../TrackList/TrackList";
 import Track from "../Track/Track";
 
-function Playlist({playlistName, handleNameChange, playListTracks, handleRemoveTrack}){
+
+function Playlist({playlistName, handleNameChange, playListTracks, handleRemoveTrack, handleCreateSpotifyPlaylist}){
     return(
         <div className="Playlist">
             <input type="text" placeholder="Enter Playlist Name" value={playlistName} onChange={handleNameChange}></input>
@@ -13,7 +14,7 @@ function Playlist({playlistName, handleNameChange, playListTracks, handleRemoveT
                 isRemovable={true}
                 />
             
-            <button className="Playlist-save">Save Playlist to Spotify</button> 
+            <button onClick={handleCreateSpotifyPlaylist} className="Playlist-save">Save Playlist to Spotify</button> 
         </div>
     )
 }

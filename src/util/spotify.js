@@ -1,138 +1,179 @@
 let stateKey = 'spotify_auth_state';
+const client_id = 'b4ddea724f004dd9803b28998ac8738c'; // Your client id
+const redirect_uri = 'http://localhost:3000/'; // Your redirect uri
+let access_token;
+let state;
+let expires_in;
+const Spotify = {
 
-/**
- * Obtains parameters from the hash of the URL
- * @return Object
- */
-function getHashParams() {
-  let hashParams = {};
-  let e, r = /([^&;=]+)=?([^&;]*)/g,
-    q = window.location.hash.substring(1);
-  while (e = r.exec(q)) {
-    hashParams[e[1]] = decodeURIComponent(e[2]);
-  }
-  return hashParams;
-}
+  /**
+   * Obtains parameters from the hash of the URL
+   * @return Object
+   */
+  getHashParams() {
+    let hashParams = {};
+    let e, r = /([^&;=]+)=?([^&;]*)/g,
+      q = window.location.hash.substring(1);
+    while (e = r.exec(q)) {
+      hashParams[e[1]] = decodeURIComponent(e[2]);
+    }
+    return hashParams;
+  },
 
-/**
- * Generates a random string containing numbers and letters
- * @param  {number} length The length of the string
- * @return {string} The generated string
- */
-function generateRandomString(length) {
-  let text = '';
-  let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  /**
+   * Generates a random string containing numbers and letters
+   * @param  {number} length The length of the string
+   * @return {string} The generated string
+   */
+  generateRandomString(length) {
+    let text = '';
+    let possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
 
-  for (let i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
-
-let params = getHashParams();
-
-let access_token = params.access_token,
-  state = params.state,
-  storedState = localStorage.getItem(stateKey);
+    for (let i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+  },
 
 
+  getAccessToken() {
 
-function authenticate() {
-  if (access_token) {
-    console.log(access_token)
-    // This clears the parameters, allowing us to grab a new access token when it expires 
-    setTimeout(() => {
-      access_token = '';
-      alert("Token expired");
-    }, params.expires_in * 1000)
-    //window.alert(`PushState para eliminar el token de la direccion del navegador: ${accessToken}`)
-    window.history.pushState('Access Token', null, '/');
-    return access_token
-  } else {
-    let client_id = 'b4ddea724f004dd9803b28998ac8738c'; // Your client id
-    let redirect_uri = 'http://localhost:3000/'; // Your redirect uri
 
-    let state = generateRandomString(16);
+    if (access_token) {
+      return access_token;
+    }
 
-    localStorage.setItem(stateKey, state);
-    let scope = 'user-read-private user-read-email';
+    let params = this.getHashParams();
+
+    access_token = params.access_token;
+    state = params.state;
+    expires_in = Number(params.expires_in);
+  
+    if (access_token && expires_in) {
+
+      // This clears the parameters, allowing us to grab a new access token when it expires 
+      setTimeout(() => {
+        access_token = '';
+        alert("Token expired");
+      }, params.expires_in * 1000)
+      //window.alert(`PushState para eliminar el token de la direccion del navegador: ${accessToken}`)
+      window.history.pushState('Access Token', null, '/');
+      return access_token
+    } else {
+
+
+
+      state = this.generateRandomString(16);
+
+      localStorage.setItem(stateKey, state);
+      let scope = 'playlist-modify-public';
 
     let url = 'https://accounts.spotify.com/authorize';
-    url += '?response_type=token';
-    url += '&client_id=' + encodeURIComponent(client_id);
-    url += '&scope=' + encodeURIComponent(scope);
-    url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
-    url += '&state=' + encodeURIComponent(state);
-    url += '&show_dialog=' + false;
+      url += '?response_type=token';
+      url += '&client_id=' + encodeURIComponent(client_id);
+      url += '&scope=' + encodeURIComponent(scope);
+      url += '&redirect_uri=' + encodeURIComponent(redirect_uri);
+      url += '&state=' + encodeURIComponent(state);
+      url += '&show_dialog=' + false; 
+    
 
-    window.location = url;
-
-
-  }
-
-};
-
-// This commented code uses synchronous call.
-const getData = (searchQuery) => {
-authenticate()
-  return fetch('https://api.spotify.com/v1/search?q=' + searchQuery + '&type=track',
-    {
-      headers: { 'Authorization': 'Bearer ' + access_token }
+      window.location = url;
     }
-  ).then(
-    response => {
+
+
+  },
+
+
+  search(searchQuery) {
+    if(!searchQuery){
+      return;
+    }
+
+    if (!access_token) {
+      this.getAccessToken();
+    }
+
+    return fetch('https://api.spotify.com/v1/search?q=' + searchQuery + '&type=track',
+      {
+        headers: { 'Authorization': 'Bearer ' + access_token }
+      }
+    ).then(
+      response => {
+
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error('Request failed!');
+      }, networkError => console.log(networkError.message)
+    ).then(
+      jsonResponse => {
+        return (jsonResponse.tracks.items.map((track) =>
+        ({
+          name: track.name,
+          artist: track.artists[0].name,
+          album: track.album.name,
+          id: track.id,
+          uri: track.uri
+
+        })))
+      }
+    )
+
+  },
+
+  savePlaylist(playlistName, trackUris) {
+    if(!playlistName || !trackUris){
+      return;
+    }
+
+
+    this.getAccessToken();
+
+
+    let user_Id;
+    const headers = { Authorization: `Bearer ${access_token}` };
+
+    return fetch('https://api.spotify.com/v1/me', { headers: headers }
+    ).then(response => {
       if (response.ok) {
         return response.json();
+      } else {
+        throw new Error('Request failed!')
       }
-      throw new Error('Request failed!');
     }, networkError => console.log(networkError.message)
-  ).then(
-    jsonResponse => {
+    ).then(jsonResponse => {
+      user_Id = jsonResponse["id"]
+      debugger;
+      return fetch(`https://api.spotify.com/v1/users/${user_Id}/playlists`, {
+        headers: headers,
+        method: 'POST',
+        body: JSON.stringify({
+          name: playlistName
+          //"description": "Jammming user playlist",
+          //"public": true
+        })
+      }
+      )
+    }).then(
+      response => {
 
-      //code to execute with jsonResponse
-      //console.log(jsonResponse)
-      return (jsonResponse.tracks.items.map((track) =>
-      ({
-        name: track.name,
-        artist: track.artists[0].name,
-        album: track.album.name,
-        id: track.id,
-        uri: track.uri
-
-      })))
-    }
-  )
+        if (response.ok) {
+          return response.json();
+        }
+        debugger;
+        throw new Error('Request failed!');
+      }, networkError => console.log(networkError.message)
+    ).then(
+      jsonResponse => {
+        const playlist_Id = jsonResponse.id;
+        return fetch(`https://api.spotify.com/v1/users/${user_Id}/playlists/${playlist_Id}/tracks`, {
+          headers: headers,
+          method: 'POST',
+          body: JSON.stringify({ uris: trackUris })
+        })
+      });
+  }
 
 }
 
-// This is an asyncrhonous call.
-/* const getData = async (searchQuery) => {
-  authenticate();
-  try {
-    const response = await fetch('https://api.spotify.com/v1/search?q=' + searchQuery + '&type=track',
-      {
-        headers: { 'Authorization': 'Bearer ' + access_token }
-      });
-    if (response.ok) {
-      const jsonResponse = await response.json();
-      // Code to execute with jsonResponse
-      console.log(jsonResponse)
-      console.log (jsonResponse.tracks.items[0].name)
-    } else {
-      throw new Error('Request failed!');
-    }
-  } catch (error) {
-    console.log(error.message);
-  }
-} */
-
-/* 
-function searchTerm() {
-
-  // authenticate();
-  const searchQuery = document.getElementById("search-query").value;
-  getData(encodeURIComponent(searchQuery));
-
-} */
-
-export default getData;
+export default Spotify;
